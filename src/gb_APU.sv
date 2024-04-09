@@ -78,7 +78,7 @@ module gb_APU (
     logic [3:0]  ch1_initial_volume;
     logic        ch1_envelope_increasing;
     logic [2:0]  ch1_num_envelope_sweeps;
-    logic [10:0] ch1_frequency = {reg_nr14[2:0], reg_nr13[7:0]};
+    logic [10:0] ch1_frequency;
     logic        ch1_start;  // Corresponds to the 'trigger' value
     logic        ch1_single;
     assign ch1_sweep_time = reg_nr10[6:4];

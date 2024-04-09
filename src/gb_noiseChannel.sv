@@ -19,7 +19,7 @@ Inputs:
     num_envelope_sweeps - Sweep Pace (envelope adjusts every 'sweep pace' 64Hz ticks)
     shift_clock_freq    - Shift Clock Prescaler
     counter_width       - LFSR Regulator
-    freq_dividing_ratio - Shift Clock Divider, treat 0 as (1/2)
+    freq_dividing_ratio - Period Divider shift amount
     start               - Channel Trigger
     single              - Stops sound once 'length' is reached
 
@@ -64,7 +64,7 @@ module gb_noiseChannel (
 
     freq_dividing_ratio: the Base Divisor Code, encoded as follows:
         -> This calculation is determined by the formula:
-            Divisor = (Value == 0) ? (Value << 4) : 8
+            Divisor = (Value == 0) ? 8 : (Value << 4)
 
         Value | Divisor
         ---------------
@@ -93,17 +93,17 @@ module gb_noiseChannel (
         if (freq_dividing_ratio == 3'b000)
             polynomialDivisor = 7'd8;
         else
-            polynomialDivisor = (freq_dividing_ratio << 4);
+            polynomialDivisor = {freq_dividing_ratio, 4'b0000};
     end
 
-    // polynomialDivisor can be shifted by up to (2^5)-1 = 31 times, so we need
-    // (7+31) = 38 bits.
+    // polynomialDivisor can be shifted by up to (2^4)-1 = 15 times, so we need
+    // (7+15) = 22 bits.
     // The Frequency Timer acts as a down-counter
-    logic [37:0] frequencyTimer;
+    logic [21:0] frequencyTimer;
 
     // Stores the calculated Frequency Timer formula result
-    logic [37:0] calcFrequencyTimer;
-    assign calcFrequencyTimer = ({{31{1'b0}}, polynomialDivisor} << freq_dividing_ratio);
+    logic [21:0] calcFrequencyTimer;
+    assign calcFrequencyTimer = ({{15{1'b0}}, polynomialDivisor} << shift_clock_freq);
 
     // Store the LFSR Register
     logic [14:0] lfsr;

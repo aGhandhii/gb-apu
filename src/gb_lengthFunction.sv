@@ -2,6 +2,7 @@
 
 If enabled, the Length Function starts the length timer, which disables the
 channel once it runs out until the next trigger.
+On a reset, we disable the channel.
 
 Credit:
     VerilogBoy: https://github.com/zephray/VerilogBoy
@@ -29,26 +30,30 @@ module gb_lengthFunction #(parameter WIDTH = 6) (
     input logic [WIDTH-1:0] length,
     output logic enable = 0
 );
-    // Up-Counter
+    // Up-Counter, when the value maxes out, the length timer expires and the
+    // channel is disabled. This value is set to the length input on a trigger,
+    // meaning that higher values of length correspond to shorter length timers
     logic [WIDTH-1:0] length_left;
 
-    // Length Control
+    // Length Function Implementation
     always_ff @(posedge clk) begin
-        if (start) begin
-            enable <= 1'b1;
-            length_left <= (length == 0) ? ({WIDTH{1'b1}}) : (length);
-        end
-        else if (clk_length_ctr) begin
-            if (single) begin
-                if (length_left != {WIDTH{1'b1}})
-                    length_left <= length_left + 1'b1;
-                else
-                    enable <= 1'b0;
-            end
-        end
         if (reset) begin
             enable <= 1'b0;
             length_left <= 0;
+        end
+        else begin
+            if (start) begin
+                enable <= 1'b1;
+                length_left <= (length == 0) ? ({WIDTH{1'b1}}) : (length);
+            end
+            else if (clk_length_ctr) begin
+                if (single) begin
+                    if (length_left != {WIDTH{1'b1}})
+                        length_left <= length_left + 1'b1;
+                    else
+                        enable <= 1'b0;
+                end
+            end
         end
     end
 

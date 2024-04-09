@@ -3,13 +3,13 @@ vlib work
 
 # Compile Code
 vlog "./src/*.sv"
-vlog "./test/gb_sweepFunction_tb.sv"
+vlog "./test/gb_noiseChannel_tb.sv"
 
 # Start the Simulator
-vsim -voptargs="+acc" -t 1ps -lib work gb_sweepFunction_tb
+vsim -voptargs="+acc" -t 1ps -lib work gb_noiseChannel_tb
 
 # Source the wave file
-do ./Modelsim/gb_sweepFunction_wave.do
+do ./Modelsim/gb_noiseChannel_wave.do
 
 # Set window types
 view wave

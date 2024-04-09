@@ -48,8 +48,8 @@ module gb_lengthFunction_tb();
 
     // Testbench
     initial begin
-        single = 1'b0;
-        length = 6'b111000;  // 8 cycles
+        single = 1'b1;
+        length = 6'b111100;  // 4 cycles till shutoff
         resetChannel();
         triggerChannel();
         repeat(10) tickLengthClock();
