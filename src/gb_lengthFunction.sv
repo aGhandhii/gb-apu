@@ -28,7 +28,7 @@ module gb_lengthFunction #(parameter WIDTH = 6) (
     input logic start,
     input logic single,
     input logic [WIDTH-1:0] length,
-    output logic enable = 0
+    output logic enable
 );
     // Up-Counter, when the value maxes out, the length timer expires and the
     // channel is disabled. This value is set to the length input on a trigger,

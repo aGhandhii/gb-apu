@@ -165,7 +165,7 @@ module gb_pulseChannel (
             2'b00:
                 waveValue = (waveIndex != 3'b111) ? 1'b0 : 1'b1;
             2'b01:
-                waveValue = (waveIndex[2:1] != 2'b11) ? 1'b1 : 1'b0;
+                waveValue = (waveIndex[2:1] != 2'b11) ? 1'b0 : 1'b1;
             2'b10:
                 waveValue = (waveIndex[2]) ? 1'b1 : 1'b0;
             2'b11:
