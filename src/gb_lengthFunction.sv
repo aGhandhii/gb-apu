@@ -30,9 +30,14 @@ module gb_lengthFunction #(parameter WIDTH = 6) (
     input logic [WIDTH-1:0] length,
     output logic enable
 );
-    // Up-Counter, when the value maxes out, the length timer expires and the
-    // channel is disabled. This value is set to the length input on a trigger,
-    // meaning that higher values of length correspond to shorter length timers
+    /* Up-Counter, when the value maxes out, the length timer expires and the
+    channel is disabled. This value is set to the length input on a trigger,
+    meaning that higher values of length correspond to shorter length timers.
+
+    This parameter changes dependent on the channel:
+        CH 1,2,4 -> length_left =  64 - length
+        CH 3     -> length_left = 256 - length
+    */
     logic [WIDTH-1:0] length_left;
 
     // Length Function Implementation

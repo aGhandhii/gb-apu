@@ -14,7 +14,7 @@ Inputs:
     reset       - System Reset
     addr_i      - CPU Address In (16-bit, 0xFFXX)
     data_i      - CPU Data In (8-bit)
-    wren        - CPU 'write' enable
+    wren        - CPU write enable
 
 Outputs:
     data_o      - data from requested sound register
@@ -227,12 +227,12 @@ module gb_APU (
                 // Handle Write Requests to the Audio Control Registers
                 if (addr_in_regs) begin
                     // Check for change of Master Audio Bit
-                    if ((addr_i == 16'hFF26) && (data_i[7] == 0)) begin
+                    if ((addr_i == 16'hFF26) && (data_i[7] == 1'b0)) begin
                         for (i = 0; i < 32; i = i+1) begin: masterResetAudio
                             regs[i] <= 8'h00;
                         end
                     end
-                    else if (sound_enable || ((addr_i == 16'hFF26)&&(data_i[7] == 1))) begin
+                    else if (sound_enable || ((addr_i == 16'hFF26)&&(data_i[7] == 1'b1))) begin
                         regs[reg_addr] <= data_i;
                     end
                 end
@@ -419,6 +419,7 @@ module gb_APU (
     assign mixer_sum_right = DAC_sum_right * right_output_level;
 
     // Volume Unit
+    // Outputs are SIGNED 16-bit values, change this to hardware specification
     assign left  = (sound_enable) ? {1'b0, mixer_sum_left[8:0], 6'b0} : 16'b0;
     assign right = (sound_enable) ? {1'b0, mixer_sum_right[8:0], 6'b0} : 16'b0;
 
