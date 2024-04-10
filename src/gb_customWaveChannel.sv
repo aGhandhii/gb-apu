@@ -43,7 +43,7 @@ module gb_customWaveChannel (
 
     // Posedge detection for the trigger
     logic start_posedge;
-    edgedet start_edgeDetection (
+    edgeDetector start_edgeDetection (
         .clk(clk),
         .i(start),
         .o(start_posedge)
