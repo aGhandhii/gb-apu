@@ -4,8 +4,8 @@ Credit:
     VerilogBoy: https://github.com/zephray/VerilogBoy
 */
 module edgeDetector (
-    input logic clk,
-    input logic i,
+    input  logic clk,
+    input  logic i,
     output logic o
 );
 
@@ -18,4 +18,4 @@ module edgeDetector (
     // the posedge for an extra cycle
     assign o = (!last_i) && i;
 
-endmodule // edgeDetector
+endmodule : edgeDetector

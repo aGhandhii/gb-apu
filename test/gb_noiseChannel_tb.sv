@@ -1,5 +1,5 @@
 /* Testbench for Noise Channel */
-module gb_noiseChannel_tb();
+module gb_noiseChannel_tb ();
 
     // IO Replication
     logic reset;
@@ -18,52 +18,50 @@ module gb_noiseChannel_tb();
     logic [3:0] level;
     logic enable;
 
-    // Clock Toggle
-    initial begin
+    initial begin : ToggleClock
         clk = 1'b0;
         forever #(10) clk <= ~clk;
-    end
+    end : ToggleClock
 
     // Instance
     gb_noiseChannel dut (.*);
 
     // Tasks
-    task trigger();
+    task automatic trigger();
         start = 1'b0;
         @(posedge clk);
         start = 1'b1;
         @(posedge clk);
         start = 1'b0;
-    endtask
+    endtask : trigger
 
-    task sysReset();
+    task automatic sysReset();
         reset = 1'b1;
         @(posedge clk);
         reset = 1'b0;
-    endtask
+    endtask : sysReset
 
-    task tickLength();
+    task automatic tickLength();
         clk_length_ctr = 1'b1;
         @(posedge clk);
         clk_length_ctr = 1'b0;
-    endtask
+    endtask : tickLength
 
-    task tickEnvelope();
+    task automatic tickEnvelope();
         clk_vol_env = 1'b1;
         @(posedge clk);
         clk_vol_env = 1'b0;
-    endtask
+    endtask : tickEnvelope
 
-    task tickLengthEnvelope();
+    task automatic tickLengthEnvelope();
         clk_length_ctr = 1'b1;
         clk_vol_env = 1'b1;
         @(posedge clk);
         clk_length_ctr = 1'b0;
         clk_vol_env = 1'b0;
-    endtask
+    endtask : tickLengthEnvelope
 
-    // Testbench
-    initial begin
+    initial begin : Testbench
 
         // Length Function Settings
         single = 1'b1;
@@ -81,14 +79,14 @@ module gb_noiseChannel_tb();
 
         sysReset();
         trigger();
-        repeat (150) @(posedge clk); // Run until output is 1
+        repeat (150) @(posedge clk);  // Run until output is 1
 
         // test functions
         //repeat(100) tickLength();
         //repeat(100) tickEnvelope();
-        repeat(100) tickLengthEnvelope();
+        repeat (100) tickLengthEnvelope();
 
         $stop();
-    end
+    end : Testbench
 
-endmodule  // gb_noiseChannel_tb
+endmodule : gb_noiseChannel_tb

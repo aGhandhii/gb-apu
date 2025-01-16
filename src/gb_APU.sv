@@ -35,7 +35,7 @@ module gb_APU (
     // Stores the sound registers
     // We declare 32 8-bit registers, we want to ensure 5-bit addressing is
     // possible. In practice, there are only 23 registers that are R/W active
-    logic [7:0] regs [32];
+    logic [7:0] regs[32];
 
     // Audio Register definitions (Descriptions from the Pan Docs)
     logic [7:0] reg_nr10, reg_nr11, reg_nr12, reg_nr13, reg_nr14;
@@ -70,14 +70,14 @@ module gb_APU (
     /////////////////////////
 
     // Channel 1 (Square Wave w/ Envelope and Sweep)
-    logic [2:0]  ch1_sweep_time;
+    logic [ 2:0] ch1_sweep_time;
     logic        ch1_sweep_decreasing;
-    logic [2:0]  ch1_num_sweep_shifts;
-    logic [1:0]  ch1_wave_duty;
-    logic [5:0]  ch1_length;  // WRITE ONLY
-    logic [3:0]  ch1_initial_volume;
+    logic [ 2:0] ch1_num_sweep_shifts;
+    logic [ 1:0] ch1_wave_duty;
+    logic [ 5:0] ch1_length;  // WRITE ONLY
+    logic [ 3:0] ch1_initial_volume;
     logic        ch1_envelope_increasing;
-    logic [2:0]  ch1_num_envelope_sweeps;
+    logic [ 2:0] ch1_num_envelope_sweeps;
     logic [10:0] ch1_frequency;
     logic        ch1_start;  // Corresponds to the 'trigger' value
     logic        ch1_single;
@@ -93,11 +93,11 @@ module gb_APU (
     assign ch1_single = reg_nr14[6];
 
     // Channel 2 (Square Wave w/ Envelope)
-    logic [1:0]  ch2_wave_duty;
-    logic [5:0]  ch2_length;
-    logic [3:0]  ch2_initial_volume;
+    logic [ 1:0] ch2_wave_duty;
+    logic [ 5:0] ch2_length;
+    logic [ 3:0] ch2_initial_volume;
     logic        ch2_envelope_increasing;
-    logic [2:0]  ch2_num_envelope_sweeps;
+    logic [ 2:0] ch2_num_envelope_sweeps;
     logic [10:0] ch2_frequency;
     logic        ch2_start;  // Corresponds to the 'trigger' value
     logic        ch2_single;
@@ -111,8 +111,8 @@ module gb_APU (
 
     // Channel 3 (Custom Wave)
     logic        ch3_on;
-    logic [7:0]  ch3_length;  // Initial Length Timer - WRITE ONLY
-    logic [1:0]  ch3_volume;  // 00 - Mute, 01 - 100%, 10 - 50%, 11 - 25%
+    logic [ 7:0] ch3_length;  // Initial Length Timer - WRITE ONLY
+    logic [ 1:0] ch3_volume;  // 00 - Mute, 01 - 100%, 10 - 50%, 11 - 25%
     logic [10:0] ch3_frequency;
     logic        ch3_start;  // Corresponds to the 'trigger' value
     logic        ch3_single;
@@ -128,7 +128,7 @@ module gb_APU (
     logic       ch4_envelope_increasing;
     logic [2:0] ch4_num_envelope_sweeps;
     logic [3:0] ch4_shift_clock_freq;
-    logic       ch4_counter_width; // 0 = 15 bits, 1 = 7 bits
+    logic       ch4_counter_width;  // 0 = 15 bits, 1 = 7 bits
     logic [2:0] ch4_freq_dividing_ratio;
     logic       ch4_start;  // Corresponds to the 'trigger' value
     logic       ch4_single;  // Length Enable
@@ -159,7 +159,7 @@ module gb_APU (
     assign sound_enable = reg_nr52[7];
 
     // The 'on' flags are read-only
-    logic  ch4_on_flag, ch3_on_flag, ch2_on_flag, ch1_on_flag;
+    logic ch4_on_flag, ch3_on_flag, ch2_on_flag, ch1_on_flag;
 
     ////////////////////////////////
     // CUSTOM WAVE MEMORY CONTROL //
@@ -168,7 +168,7 @@ module gb_APU (
     // System issues occur when accessing Wave Memory while Channel 3 is active
     // so we give priority to Channel 3 for Wave Memory Access
     // In practice, we need to disable channel 3 before writing to Wave Memory
-    logic [7:0] wave [16];
+    logic [7:0] wave[16];
     logic [3:0] wave_addr_ext;  // in range 0x0 - 0xF, to access 0xFF30 - 0xFF3F
     logic [3:0] wave_addr_int;  // Used by Custom Wave Channel to read wave data
     logic [3:0] wave_addr;
@@ -202,12 +202,9 @@ module gb_APU (
     // CPU Reads
     always_comb begin
         if (addr_in_regs) begin
-            if (addr_i == 16'hFF26)
-                data_o = {sound_enable, 3'b000, ch4_on_flag, ch3_on_flag, ch2_on_flag, ch1_on_flag};
-            else
-                data_o = regs[reg_addr];
-        end
-        else if (addr_in_wave) begin
+            if (addr_i == 16'hFF26) data_o = {sound_enable, 3'b000, ch4_on_flag, ch3_on_flag, ch2_on_flag, ch1_on_flag};
+            else data_o = regs[reg_addr];
+        end else if (addr_in_wave) begin
             data_o = wave[wave_addr];
         end else begin
             data_o = 8'hFF;  // Default Return Value
@@ -218,47 +215,35 @@ module gb_APU (
     integer i;
     always_ff @(posedge clk) begin
         if (reset) begin
-            for (i = 0; i < 32; i = i+1) begin: resetAudioRegisters
+            for (i = 0; i < 32; i = i + 1) begin : resetAudioRegisters
                 regs[i] <= 8'h00;
             end
-        end
-        else begin
+        end else begin
             if (wren) begin
                 // Handle Write Requests to the Audio Control Registers
                 if (addr_in_regs) begin
                     // Check for change of Master Audio Bit
                     if ((addr_i == 16'hFF26) && (data_i[7] == 1'b0)) begin
-                        for (i = 0; i < 32; i = i+1) begin: masterResetAudio
+                        for (i = 0; i < 32; i = i + 1) begin : masterResetAudio
                             regs[i] <= 8'h00;
                         end
-                    end
-                    else if (sound_enable || ((addr_i == 16'hFF26)&&(data_i[7] == 1'b1))) begin
+                    end else if (sound_enable || ((addr_i == 16'hFF26) && (data_i[7] == 1'b1)))
                         regs[reg_addr] <= data_i;
-                    end
-                end
-                else if (addr_in_wave) begin
+                end else if (addr_in_wave) begin
                     // Write to the custom wave address
                     wave[wave_addr] <= data_i;
                 end
             end
             // Sets the 'Trigger' Value for each channel
             // We do this at the clock so it is only set for 1 cycle
-            if ((wren)&&(addr_i == 16'hFF14))
-                ch1_start <= data_i[7];
-            else
-                ch1_start <= 0;
-            if ((wren)&&(addr_i == 16'hFF19))
-                ch2_start <= data_i[7];
-            else
-                ch2_start <= 0;
-            if ((wren)&&(addr_i == 16'hFF1E))
-                ch3_start <= data_i[7];
-            else
-                ch3_start <= 0;
-            if ((wren)&&(addr_i == 16'hFF23))
-                ch4_start <= data_i[7];
-            else
-                ch4_start <= 0;
+            if ((wren) && (addr_i == 16'hFF14)) ch1_start <= data_i[7];
+            else ch1_start <= 0;
+            if ((wren) && (addr_i == 16'hFF19)) ch2_start <= data_i[7];
+            else ch2_start <= 0;
+            if ((wren) && (addr_i == 16'hFF1E)) ch3_start <= data_i[7];
+            else ch3_start <= 0;
+            if ((wren) && (addr_i == 16'hFF23)) ch4_start <= data_i[7];
+            else ch4_start <= 0;
         end
     end
 
@@ -266,9 +251,9 @@ module gb_APU (
     // FRAME SEQUENCER CLOCK DIVISION //
     ////////////////////////////////////
 
-    logic clk_length_ctr; // 256Hz Length Control Clock
-    logic clk_vol_env;    // 64Hz Volume Enevelope Clock
-    logic clk_sweep;      // 128Hz Sweep Clock
+    logic clk_length_ctr;  // 256Hz Length Control Clock
+    logic clk_vol_env;  // 64Hz Volume Enevelope Clock
+    logic clk_sweep;  // 128Hz Sweep Clock
 
     gb_frameSequencer APUclockDivider (
         .clk(clk),
@@ -290,7 +275,7 @@ module gb_APU (
 
     // Channel 1 Submodule. This channel is a pulse function with Sweep, Level,
     // and Envelope Functions
-    gb_pulseChannel channel_1(
+    gb_pulseChannel channel_1 (
         .reset(~sound_enable),
         .clk(clk),
         .clk_length_ctr(clk_length_ctr),
@@ -314,7 +299,7 @@ module gb_APU (
     // Channel 2 Submodule. This Channel is a pulse function with Level and
     // Envelope Functions. It does NOT implement the Sweep Function, so we pass
     // all Sweep parameters as 0.
-    gb_pulseChannel channel_2(
+    gb_pulseChannel channel_2 (
         .reset(~sound_enable),
         .clk(clk),
         .clk_length_ctr(clk_length_ctr),
@@ -338,7 +323,7 @@ module gb_APU (
     // Channel 3 Submodule. This channel reads from a 16-byte section of memory
     // in 4-bit nibbles as a customized waveform. It also has a Level and
     // Envelope function.
-    gb_customWaveChannel channel_3(
+    gb_customWaveChannel channel_3 (
         .reset(~sound_enable),
         .clk(clk),
         .clk_length_ctr(clk_length_ctr),
@@ -356,7 +341,7 @@ module gb_APU (
 
     // Channel 4 Submodule. This channel generates noise with an LFSR and has
     // Level and Enevelope Functions.
-    gb_noiseChannel channel_4(
+    gb_noiseChannel channel_4 (
         .reset(~sound_enable),
         .clk(clk),
         .clk_length_ctr(clk_length_ctr),
@@ -400,7 +385,7 @@ module gb_APU (
     logic [5:0] DAC_sum_left;
     logic [5:0] DAC_sum_right;
     always_comb begin
-        DAC_sum_left = 6'd0;
+        DAC_sum_left  = 6'd0;
         DAC_sum_right = 6'd0;
         if (left_ch1_enable) DAC_sum_left = DAC_sum_left + {2'b00, ch1};
         if (left_ch2_enable) DAC_sum_left = DAC_sum_left + {2'b00, ch2};
@@ -420,7 +405,7 @@ module gb_APU (
 
     // Volume Unit
     // Outputs are SIGNED 16-bit values, change this to hardware specification
-    assign left  = (sound_enable) ? {1'b0, mixer_sum_left[8:0], 6'b0} : 16'b0;
+    assign left = (sound_enable) ? {1'b0, mixer_sum_left[8:0], 6'b0} : 16'b0;
     assign right = (sound_enable) ? {1'b0, mixer_sum_right[8:0], 6'b0} : 16'b0;
 
-endmodule  // gb_APU
+endmodule : gb_APU

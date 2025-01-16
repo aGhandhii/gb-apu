@@ -53,8 +53,8 @@ module gb_pulseChannel (
     logic start_posedge;
     edgeDetector start_edgeDetection (
         .clk(clk),
-        .i(start),
-        .o(start_posedge)
+        .i  (start),
+        .o  (start_posedge)
     );
 
     /////////////////////////////////////////////////
@@ -117,25 +117,22 @@ module gb_pulseChannel (
     */
 
     // Holds index of current location in waveform given specified duty cycle
-    logic [2:0] waveIndex = 3'b000;
+    logic [ 2:0] waveIndex = 3'b000;
 
     logic [10:0] periodDivider;  // 11-bit up-counter
-    logic [1:0] periodDividerClock;  // Increment periodDivider every 4 T-Cycles
+    logic [ 1:0] periodDividerClock;  // Increment periodDivider every 4 T-Cycles
 
     always_ff @(posedge clk) begin
         if (start_posedge) begin
             waveIndex <= 3'b000;
             periodDivider <= frequency;
             periodDividerClock <= 2'b11;
-        end
-        else begin
+        end else begin
             if (periodDividerClock == 2'b00) begin
                 if (periodDivider == 11'd2047) begin
                     waveIndex <= waveIndex + 1;
                     periodDivider <= pulse_frequency;  // Load the sweep-calculated frequency
-                end
-                else
-                    periodDivider <= periodDivider + 1;
+                end else periodDivider <= periodDivider + 1;
             end
             periodDividerClock <= periodDividerClock - 1;
         end
@@ -162,16 +159,11 @@ module gb_pulseChannel (
     logic waveValue;
     always_comb begin
         case (wave_duty)
-            2'b00:
-                waveValue = (waveIndex != 3'b111) ? 1'b0 : 1'b1;
-            2'b01:
-                waveValue = (waveIndex[2:1] != 2'b11) ? 1'b0 : 1'b1;
-            2'b10:
-                waveValue = (waveIndex[2]) ? 1'b1 : 1'b0;
-            2'b11:
-                waveValue = (waveIndex[2:1] == 2'b00) ? 1'b0 : 1'b1;
-            default:
-                waveValue = 1'b0;
+            2'b00:   waveValue = (waveIndex != 3'b111) ? 1'b0 : 1'b1;
+            2'b01:   waveValue = (waveIndex[2:1] != 2'b11) ? 1'b0 : 1'b1;
+            2'b10:   waveValue = (waveIndex[2]) ? 1'b1 : 1'b0;
+            2'b11:   waveValue = (waveIndex[2:1] == 2'b00) ? 1'b0 : 1'b1;
+            default: waveValue = 1'b0;
         endcase
     end
 
@@ -183,6 +175,6 @@ module gb_pulseChannel (
     assign enable = enable_length & ~overflow;
 
     // Output Level Logic
-    assign level = (enable&waveValue) ? target_vol : 4'b0000;
+    assign level  = (enable & waveValue) ? target_vol : 4'b0000;
 
-endmodule  // gb_pulseChannel
+endmodule : gb_pulseChannel

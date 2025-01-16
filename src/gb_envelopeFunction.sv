@@ -30,7 +30,7 @@ module gb_envelopeFunction (
     output logic [3:0] target_vol
 );
 
-    logic [2:0] enve_left; // Iterator for num_envelope_sweeps
+    logic [2:0] enve_left;  // Iterator for num_envelope_sweeps
     logic enve_enabled;
     assign enve_enabled = (num_envelope_sweeps == 3'd0) ? 0 : 1;
 
@@ -40,29 +40,21 @@ module gb_envelopeFunction (
             // Channel is triggered, reset to the initial volume and load the
             // envelope settings
             target_vol <= initial_volume;
-            enve_left <= num_envelope_sweeps;
-        end
-        else if (clk_vol_env) begin
+            enve_left  <= num_envelope_sweeps;
+        end else if (clk_vol_env) begin
             // On a tick of the Envelope Clock, if our Envelope Sweep iterator
             // is nonzero, we adjust the output volume according to the
             // envelope direction parameter
-            if (enve_left != 3'b0) begin
-                enve_left <= enve_left - 1'b1;
-            end
+            if (enve_left != 3'b0) enve_left <= enve_left - 1'b1;
             else begin
                 if (enve_enabled) begin
-                    if (envelope_increasing) begin
-                        if (target_vol != 4'b1111)
-                            target_vol <= target_vol + 1;
-                    end
-                    else begin
-                        if (target_vol != 4'b0000)
-                            target_vol <= target_vol - 1;
-                    end
+                    if (envelope_increasing)
+                        if (target_vol != 4'b1111) target_vol <= target_vol + 1;
+                        else if (target_vol != 4'b0000) target_vol <= target_vol - 1;
                     enve_left <= num_envelope_sweeps;
                 end
             end
         end
     end
 
-endmodule  // gb_envelopeFunction
+endmodule : gb_envelopeFunction

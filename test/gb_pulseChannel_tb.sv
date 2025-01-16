@@ -1,5 +1,5 @@
 /* Testbench for Pulse Channel */
-module gb_pulseChannel_tb();
+module gb_pulseChannel_tb ();
 
     // IO
     logic reset;
@@ -21,49 +21,47 @@ module gb_pulseChannel_tb();
     logic [3:0] level;
     logic enable;
 
-    // Clock Toggle
-    initial begin
+    initial begin : ToggleClock
         clk = 1'b0;
         forever #(10) clk <= ~clk;
-    end
+    end : ToggleClock
 
     // Instance
     gb_pulseChannel dut (.*);
 
-    // Tasks
-    task trigger();
+    task automatic trigger();
         start = 1'b0;
         @(posedge clk);
         start = 1'b1;
         @(posedge clk);
         start = 1'b0;
-    endtask
+    endtask : trigger
 
-    task sysReset();
+    task automatic sysReset();
         reset = 1'b1;
         @(posedge clk);
         reset = 1'b0;
-    endtask
+    endtask : sysReset
 
-    task tickLength();
+    task automatic tickLength();
         clk_length_ctr = 1'b1;
         @(posedge clk);
         clk_length_ctr = 1'b0;
-    endtask
+    endtask : tickLength
 
-    task tickEnvelope();
+    task automatic tickEnvelope();
         clk_vol_env = 1'b1;
         @(posedge clk);
         clk_vol_env = 1'b0;
-    endtask
+    endtask : tickEnvelope
 
-    task tickSweep();
+    task automatic tickSweep();
         clk_sweep = 1'b1;
         @(posedge clk);
         clk_sweep = 1'b0;
-    endtask
+    endtask : tickSweep
 
-    task tickAll();
+    task automatic tickAll();
         clk_length_ctr = 1'b1;
         clk_vol_env = 1'b1;
         clk_sweep = 1'b1;
@@ -71,10 +69,9 @@ module gb_pulseChannel_tb();
         clk_length_ctr = 1'b0;
         clk_vol_env = 1'b0;
         clk_sweep = 1'b0;
-    endtask
+    endtask : tickAll
 
-    // Testbench
-    initial begin
+    initial begin : Testbench
 
         // Length Function Settings
         single = 1'b1;  // enable
@@ -94,21 +91,20 @@ module gb_pulseChannel_tb();
         // Pulse Channel Settings
         wave_duty = 2'b10;  // duty cycle select
 
-
         sysReset();
         trigger();
 
-        //repeat (100) @(posedge clk);
+        //repeat(100) @(posedge clk);
         //repeat(100) tickLength();
         //repeat(100) tickEnvelope();
 
-        repeat(1000) begin
+        repeat (1000) begin
             tickAll();
-            repeat(64) @(posedge clk);
+            repeat (64) @(posedge clk);
         end
         //repeat(100) tickAll();
 
         $stop();
-    end
+    end : Testbench
 
-endmodule  // gb_pulseChannel_tb
+endmodule : gb_pulseChannel_tb

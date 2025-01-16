@@ -49,8 +49,8 @@ module gb_noiseChannel (
     logic start_posedge;
     edgeDetector start_edgeDetection (
         .clk(clk),
-        .i(start),
-        .o(start_posedge)
+        .i  (start),
+        .o  (start_posedge)
     );
 
     /////////////////////////////////
@@ -90,10 +90,8 @@ module gb_noiseChannel (
 
     // Calculate the Frequency Timer Divisor
     always_comb begin
-        if (freq_dividing_ratio == 3'b000)
-            polynomialDivisor = 7'd8;
-        else
-            polynomialDivisor = {freq_dividing_ratio, 4'b0000};
+        if (freq_dividing_ratio == 3'b000) polynomialDivisor = 7'd8;
+        else polynomialDivisor = {freq_dividing_ratio, 4'b0000};
     end
 
     // polynomialDivisor can be shifted by up to (2^4)-1 = 15 times, so we need
@@ -131,14 +129,11 @@ module gb_noiseChannel (
         if (start_posedge) begin
             frequencyTimer <= calcFrequencyTimer;
             lfsr <= {15{1'b1}};
-        end
-        else begin
+        end else begin
             if (frequencyTimer == 38'd0) begin
                 frequencyTimer <= calcFrequencyTimer;
                 lfsr <= lfsr_next;
-            end
-            else
-                frequencyTimer <= frequencyTimer - 1;
+            end else frequencyTimer <= frequencyTimer - 1;
         end
     end
 
@@ -171,6 +166,6 @@ module gb_noiseChannel (
     );
 
     // Only output target volume if the Envelope and Length functions allow it
-    assign level = (enable&target_freq_out) ? target_vol : 4'b0000;
+    assign level = (enable & target_freq_out) ? target_vol : 4'b0000;
 
-endmodule  // gb_noiseChannel
+endmodule : gb_noiseChannel

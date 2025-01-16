@@ -41,26 +41,22 @@ module gb_sweepFunction (
             sweep_timer <= (sweep_pace == 3'b000) ? 4'b1000 : {1'b0, sweep_pace};
             sweep_enabled <= ((sweep_pace != 0) && (num_sweep_shifts != 0)) ? 1'b1 : 1'b0;
             overflow <= 1'b0;
-        end
-        else if (clk_sweep) begin
+        end else if (clk_sweep) begin
             if (sweep_timer != 4'b0000) begin
                 sweep_timer <= sweep_timer - 1;
-            end
-            else begin
+            end else begin
                 // Reload the sweep timer
                 sweep_timer <= (sweep_pace == 3'b000) ? 4'b1000 : {1'b0, sweep_pace};
                 // Apply Sweep Shift, check for overflow if we are increasing the frequency
                 if (sweep_enabled) begin
-                    if (sweep_decreasing)
-                        shadow_frequency <= shadow_frequency - new_frequency;
+                    if (sweep_decreasing) shadow_frequency <= shadow_frequency - new_frequency;
                     else begin
                         // Latch overflow until a trigger if it occurs
-                        if (~overflow)
-                            {overflow, shadow_frequency} <= {1'b0, shadow_frequency} + {1'b0, new_frequency};
+                        if (~overflow) {overflow, shadow_frequency} <= {1'b0, shadow_frequency} + {1'b0, new_frequency};
                     end
                 end
             end
         end
     end
 
-endmodule  // gb_sweepFunction
+endmodule : gb_sweepFunction

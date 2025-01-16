@@ -21,47 +21,44 @@ module gb_customWaveChannel_tb ();
     ////////////////////////////
 
     // 16-byte wave data
-    logic [7:0] waveData [16];
+    logic [7:0] waveData[16];
 
     generate
         genvar i;
-        for (i=0;i<16;i++) begin: fillWaveData
+        for (i = 0; i < 16; i++) begin : fillWaveData
             assign waveData[i] = 8'b11110000;
         end
     endgenerate
 
     assign wave_data = waveData[wave_addr];
 
-    // Clock Toggle
-    initial begin
+    initial begin : ClockToggle
         clk = 1'b0;
         forever #(10) clk <= ~clk;
-    end
+    end : ClockToggle
 
-    // Tasks
-    task tickLength();
+    task automatic tickLength();
         clk_length_ctr = 1'b1;
         @(posedge clk);
         clk_length_ctr = 1'b0;
-    endtask
+    endtask : tickLength
 
-    task trigger();
+    task automatic trigger();
         start = 1'b0;
         @(posedge clk);
         start = 1'b1;
         @(posedge clk);
         start = 1'b0;
-    endtask
+    endtask : trigger
 
-    task sysRst();
+    task automatic sysRst();
         reset = 1'b1;
         @(posedge clk);
         reset = 1'b0;
-    endtask
+    endtask : sysReset
 
     // Instance
-    gb_customWaveChannel dut(.*);
-
+    gb_customWaveChannel dut (.*);
 
     // Testbench
     initial begin
@@ -85,4 +82,4 @@ module gb_customWaveChannel_tb ();
         $stop();
     end
 
-endmodule  // gb_customWaveChannel_tb
+endmodule : gb_customWaveChannel_tb

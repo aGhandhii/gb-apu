@@ -45,8 +45,8 @@ module gb_customWaveChannel (
     logic start_posedge;
     edgeDetector start_edgeDetection (
         .clk(clk),
-        .i(start),
-        .o(start_posedge)
+        .i  (start),
+        .o  (start_posedge)
     );
 
     // Specifies the current nibble in Custom Wave Memory to load, the top
@@ -73,16 +73,11 @@ module gb_customWaveChannel (
         if (start_posedge) begin
             divider <= {frequency, 1'b0};  // 2*frequency
             current_pointer <= 5'd0;
-        end
-        else begin
+        end else begin
             if (divider == 12'd4095) begin
-                if (on)
-                    current_pointer <= current_pointer + 1'b1;
+                if (on) current_pointer <= current_pointer + 1'b1;
                 divider <= {frequency, 1'b0};
-            end
-            else begin
-                divider <= divider + 1'b1;
-            end
+            end else divider <= divider + 1'b1;
         end
     end
 
@@ -101,16 +96,15 @@ module gb_customWaveChannel (
     always_comb begin
         if (on) begin
             case (volume)
-                2'b00: level = 4'b0000;
-                2'b01: level = current_sample[3:0];
-                2'b10: level = {1'b0, current_sample[3:1]};  // >> 1
-                2'b11: level = {2'b00, current_sample[3:2]}; // >> 2
+                2'b00:   level = 4'b0000;
+                2'b01:   level = current_sample[3:0];
+                2'b10:   level = {1'b0, current_sample[3:1]};  // >> 1
+                2'b11:   level = {2'b00, current_sample[3:2]};  // >> 2
                 default: level = 4'b0000;
             endcase
-        end
-        else begin
+        end else begin
             level = 4'b0000;  // Mute
         end
     end
 
-endmodule  // gb_customWaveChannel
+endmodule : gb_customWaveChannel

@@ -15,8 +15,8 @@ Outputs:
     sweep_clk       - Sweep Function Clock (128 (2^7) Hz)
 */
 module gb_frameSequencer (
-    input logic clk,
-    input logic reset,
+    input  logic clk,
+    input  logic reset,
     output logic length_clk,
     output logic envelope_clk,
     output logic sweep_clk
@@ -49,10 +49,8 @@ module gb_frameSequencer (
     // Up-Counter for division
     logic [15:0] div;
     always_ff @(posedge clk) begin
-        if (reset)
-            div <= 16'd0;
-        else
-            div <= div + 16'd1;
+        if (reset) div <= 16'd0;
+        else div <= div + 16'd1;
     end
 
     // Output Clock Assignments
@@ -60,4 +58,4 @@ module gb_frameSequencer (
     assign envelope_clk = (div[15:0] == {16{1'b1}});  // 2^(22-16) = 64
     assign sweep_clk    = (div[14:0] == {15{1'b1}});  // 2^(22-15) = 128
 
-endmodule  // gb_frameSequencer
+endmodule : gb_frameSequencer

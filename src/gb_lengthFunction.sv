@@ -21,7 +21,9 @@ Parameters:
     WIDTH           - Counter for length function, counts from [0, 2^^WIDTH]
                     - WIDTH = 6 for channels 1,2,4 and 8 for channel 3
 */
-module gb_lengthFunction #(parameter WIDTH = 6) (
+module gb_lengthFunction #(
+    parameter WIDTH = 6
+) (
     input logic clk,
     input logic reset,
     input logic clk_length_ctr,
@@ -45,21 +47,17 @@ module gb_lengthFunction #(parameter WIDTH = 6) (
         if (reset) begin
             enable <= 1'b0;
             length_left <= 0;
-        end
-        else begin
+        end else begin
             if (start) begin
                 enable <= 1'b1;
                 length_left <= (length == 0) ? ({WIDTH{1'b1}}) : (length);
-            end
-            else if (clk_length_ctr) begin
+            end else if (clk_length_ctr) begin
                 if (single) begin
-                    if (length_left != {WIDTH{1'b1}})
-                        length_left <= length_left + 1'b1;
-                    else
-                        enable <= 1'b0;
+                    if (length_left != {WIDTH{1'b1}}) length_left <= length_left + 1'b1;
+                    else enable <= 1'b0;
                 end
             end
         end
     end
 
-endmodule  // gb_lengthFunction
+endmodule : gb_lengthFunction

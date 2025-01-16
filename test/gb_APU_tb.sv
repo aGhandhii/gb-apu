@@ -1,5 +1,5 @@
 /* Top-Level APU Testbench */
-module gb_APU_tb();
+module gb_APU_tb ();
 
     // IO Replication
     logic clk;
@@ -14,24 +14,21 @@ module gb_APU_tb();
     // Instance
     gb_APU dut (.*);
 
-    // Clock Toggle
-    initial begin
+    initial begin : ClockToggle
         clk = 1'b0;
         forever #(10) clk <= ~clk;
-    end
+    end : ClockToggle
 
-    // Tasks
-    task sysReset();
+    task automatic sysReset();
         reset = 1'b1;
         @(posedge clk);
         reset = 1'b0;
-    endtask
+    endtask : sysReset
 
-    // Testbench
-    initial begin
+    initial begin : Testbench
         sysReset();
-        repeat(4194304) @(posedge clk);
+        repeat (4194304) @(posedge clk);
         $stop();
-    end
+    end : Testbench
 
-endmodule  // gb_APU_tb
+endmodule : gb_APU_tb
