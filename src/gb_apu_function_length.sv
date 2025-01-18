@@ -21,7 +21,7 @@ Parameters:
     WIDTH           - Counter for length function, counts from [0, 2^^WIDTH]
                     - WIDTH = 6 for channels 1,2,4 and 8 for channel 3
 */
-module gb_lengthFunction #(
+module gb_apu_function_length #(
     parameter WIDTH = 6
 ) (
     input logic clk,
@@ -60,4 +60,4 @@ module gb_lengthFunction #(
         end
     end
 
-endmodule : gb_lengthFunction
+endmodule : gb_apu_function_length

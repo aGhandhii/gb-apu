@@ -14,7 +14,7 @@ Outputs:
     envelope_clk    - Envelope Function Clock (64 (2^6) Hz)
     sweep_clk       - Sweep Function Clock (128 (2^7) Hz)
 */
-module gb_frameSequencer (
+module gb_apu_frameSequencer (
     input  logic clk,
     input  logic reset,
     output logic length_clk,
@@ -58,4 +58,4 @@ module gb_frameSequencer (
     assign envelope_clk = (div[15:0] == {16{1'b1}});  // 2^(22-16) = 64
     assign sweep_clk    = (div[14:0] == {15{1'b1}});  // 2^(22-15) = 128
 
-endmodule : gb_frameSequencer
+endmodule : gb_apu_frameSequencer

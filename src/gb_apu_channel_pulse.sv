@@ -28,7 +28,7 @@ Outputs:
     level               - Channel Output
     enable              - Internal Enable Signal
 */
-module gb_pulseChannel (
+module gb_apu_channel_pulse (
     input logic reset,
     input logic clk,
     input logic clk_length_ctr,
@@ -64,7 +64,7 @@ module gb_pulseChannel (
     logic overflow;
     logic [10:0] pulse_frequency;
 
-    gb_sweepFunction sweepFuncion (
+    gb_apu_function_sweep sweepFunction (
         .clk(clk),
         .clk_sweep(clk_sweep),
         .trigger(start_posedge),
@@ -78,7 +78,7 @@ module gb_pulseChannel (
 
     logic [3:0] target_vol;
 
-    gb_envelopeFunction envelopeFunction (
+    gb_apu_function_envelope envelopeFunction (
         .clk(clk),
         .clk_vol_env(clk_vol_env),
         .start(start_posedge),
@@ -90,7 +90,7 @@ module gb_pulseChannel (
 
     logic enable_length;
 
-    gb_lengthFunction #(6) lengthFunction (
+    gb_apu_function_length #(6) lengthFunction (
         .clk(clk),
         .reset(reset),
         .clk_length_ctr(clk_length_ctr),
@@ -177,4 +177,4 @@ module gb_pulseChannel (
     // Output Level Logic
     assign level  = (enable & waveValue) ? target_vol : 4'b0000;
 
-endmodule : gb_pulseChannel
+endmodule : gb_apu_channel_pulse

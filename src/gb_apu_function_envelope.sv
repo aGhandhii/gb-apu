@@ -20,7 +20,7 @@ Inputs:
 Outputs:
     target_vol          - Output Envelope Volume
 */
-module gb_envelopeFunction (
+module gb_apu_function_envelope (
     input logic clk,
     input logic clk_vol_env,
     input logic start,
@@ -57,4 +57,4 @@ module gb_envelopeFunction (
         end
     end
 
-endmodule : gb_envelopeFunction
+endmodule : gb_apu_function_envelope

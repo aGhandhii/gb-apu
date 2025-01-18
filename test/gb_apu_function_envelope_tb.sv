@@ -1,5 +1,5 @@
 /* Testbench for Envelope Function Module */
-module gb_envelopeFunction_tb ();
+module gb_apu_function_envelope_tb ();
 
     // Replicate IO
     logic clk;
@@ -16,7 +16,7 @@ module gb_envelopeFunction_tb ();
     end : ToggleClock
 
     // DUT Instance
-    gb_envelopeFunction dut (.*);
+    gb_apu_function_envelope dut (.*);
 
     task automatic triggerChannel();
         start = 1'b1;
@@ -44,4 +44,4 @@ module gb_envelopeFunction_tb ();
         $stop();
     end : Testbench
 
-endmodule : gb_envelopeFunction_tb
+endmodule : gb_apu_function_envelope_tb

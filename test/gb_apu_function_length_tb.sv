@@ -1,5 +1,5 @@
 /* Testbench for the Length Function */
-module gb_lengthFunction_tb ();
+module gb_apu_function_length_tb ();
 
     localparam WIDTH = 6;
 
@@ -18,7 +18,7 @@ module gb_lengthFunction_tb ();
     end : ToggleClock
 
     // DUT Instance
-    gb_lengthFunction #(WIDTH) dut (.*);
+    gb_apu_function_length #(WIDTH) dut (.*);
 
     // Tasks
     task automatic triggerChannel();
@@ -49,4 +49,4 @@ module gb_lengthFunction_tb ();
         $stop();
     end : Testbench
 
-endmodule : gb_lengthFunction_tb
+endmodule : gb_apu_function_length_tb

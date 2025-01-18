@@ -25,7 +25,7 @@ Outputs:
     level           - Output Audio Level
     enable          - Output Length Function Enable
 */
-module gb_customWaveChannel (
+module gb_apu_channel_custom (
     input logic reset,
     input logic clk,
     input logic clk_length_ctr,
@@ -82,7 +82,7 @@ module gb_customWaveChannel (
     end
 
     // Length Function
-    gb_lengthFunction #(8) lengthFunction (
+    gb_apu_function_length #(8) lengthFunction (
         .clk(clk),
         .reset(reset),
         .clk_length_ctr(clk_length_ctr),
@@ -107,4 +107,4 @@ module gb_customWaveChannel (
         end
     end
 
-endmodule : gb_customWaveChannel
+endmodule : gb_apu_channel_custom

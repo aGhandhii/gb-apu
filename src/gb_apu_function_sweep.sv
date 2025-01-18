@@ -15,7 +15,7 @@ Outputs:
     overflow            - Frequency Shift Overflow, mute channel if true
     shadow_frequency    - True frequency value calculated with Shift Function
 */
-module gb_sweepFunction (
+module gb_apu_function_sweep (
     input logic clk,
     input logic clk_sweep,
     input logic trigger,
@@ -59,4 +59,4 @@ module gb_sweepFunction (
         end
     end
 
-endmodule : gb_sweepFunction
+endmodule : gb_apu_function_sweep

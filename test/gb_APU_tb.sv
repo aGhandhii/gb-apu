@@ -1,5 +1,5 @@
 /* Top-Level APU Testbench */
-module gb_APU_tb ();
+module gb_apu_tb ();
 
     // IO Replication
     logic clk;
@@ -12,7 +12,7 @@ module gb_APU_tb ();
     logic [15:0] right;
 
     // Instance
-    gb_APU dut (.*);
+    gb_apu dut (.*);
 
     initial begin : ClockToggle
         clk = 1'b0;
@@ -31,4 +31,4 @@ module gb_APU_tb ();
         $stop();
     end : Testbench
 
-endmodule : gb_APU_tb
+endmodule : gb_apu_tb

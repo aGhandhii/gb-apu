@@ -21,7 +21,7 @@ Outputs:
     left        - Left audio out
     right       - Right audio out
 */
-module gb_APU (
+module gb_apu (
     input logic clk,
     input logic reset,
     input logic [15:0] addr_i,
@@ -255,7 +255,7 @@ module gb_APU (
     logic clk_vol_env;  // 64Hz Volume Enevelope Clock
     logic clk_sweep;  // 128Hz Sweep Clock
 
-    gb_frameSequencer APUclockDivider (
+    gb_apu_frameSequencer APUclockDivider (
         .clk(clk),
         .reset(reset),
         .length_clk(clk_length_ctr),
@@ -275,7 +275,7 @@ module gb_APU (
 
     // Channel 1 Submodule. This channel is a pulse function with Sweep, Level,
     // and Envelope Functions
-    gb_pulseChannel channel_1 (
+    gb_apu_channel_pulse channel_1 (
         .reset(~sound_enable),
         .clk(clk),
         .clk_length_ctr(clk_length_ctr),
@@ -299,7 +299,7 @@ module gb_APU (
     // Channel 2 Submodule. This Channel is a pulse function with Level and
     // Envelope Functions. It does NOT implement the Sweep Function, so we pass
     // all Sweep parameters as 0.
-    gb_pulseChannel channel_2 (
+    gb_apu_channel_pulse channel_2 (
         .reset(~sound_enable),
         .clk(clk),
         .clk_length_ctr(clk_length_ctr),
@@ -323,7 +323,7 @@ module gb_APU (
     // Channel 3 Submodule. This channel reads from a 16-byte section of memory
     // in 4-bit nibbles as a customized waveform. It also has a Level and
     // Envelope function.
-    gb_customWaveChannel channel_3 (
+    gb_apu_channel_custom channel_3 (
         .reset(~sound_enable),
         .clk(clk),
         .clk_length_ctr(clk_length_ctr),
@@ -341,7 +341,7 @@ module gb_APU (
 
     // Channel 4 Submodule. This channel generates noise with an LFSR and has
     // Level and Enevelope Functions.
-    gb_noiseChannel channel_4 (
+    gb_apu_channel_noise channel_4 (
         .reset(~sound_enable),
         .clk(clk),
         .clk_length_ctr(clk_length_ctr),
@@ -408,4 +408,4 @@ module gb_APU (
     assign left = (sound_enable) ? {1'b0, mixer_sum_left[8:0], 6'b0} : 16'b0;
     assign right = (sound_enable) ? {1'b0, mixer_sum_right[8:0], 6'b0} : 16'b0;
 
-endmodule : gb_APU
+endmodule : gb_apu

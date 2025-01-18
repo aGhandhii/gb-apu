@@ -1,5 +1,5 @@
 /* Testbench for Custom Wave Channel (Ch 3) */
-module gb_customWaveChannel_tb ();
+module gb_apu_channel_custom_tb ();
 
     // IO Replication
     logic reset;
@@ -58,7 +58,7 @@ module gb_customWaveChannel_tb ();
     endtask : sysReset
 
     // Instance
-    gb_customWaveChannel dut (.*);
+    gb_apu_channel_custom dut (.*);
 
     // Testbench
     initial begin
@@ -82,4 +82,4 @@ module gb_customWaveChannel_tb ();
         $stop();
     end
 
-endmodule : gb_customWaveChannel_tb
+endmodule : gb_apu_channel_custom_tb

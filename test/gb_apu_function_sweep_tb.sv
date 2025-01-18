@@ -1,5 +1,5 @@
 /* Testbench for Sweep Function */
-module gb_sweepFunction_tb ();
+module gb_apu_function_sweep_tb ();
 
     // IO Replication
     logic clk;
@@ -18,7 +18,7 @@ module gb_sweepFunction_tb ();
     end : ToggleClock
 
     // Instance
-    gb_sweepFunction dut (.*);
+    gb_apu_function_sweep dut (.*);
 
     // Tasks
     task automatic triggerChannel();
@@ -47,4 +47,4 @@ module gb_sweepFunction_tb ();
         $stop();
     end : Testbench
 
-endmodule : gb_sweepFunction_tb
+endmodule : gb_apu_function_sweep_tb

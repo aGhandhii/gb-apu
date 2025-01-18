@@ -27,7 +27,7 @@ Outputs:
     level               - Channel Output
     enable              - Internal Enable Signal
 */
-module gb_noiseChannel (
+module gb_apu_channel_noise (
     input logic reset,
     input logic clk,
     input logic clk_length_ctr,
@@ -144,7 +144,7 @@ module gb_noiseChannel (
     logic [3:0] target_vol;  // Store Envelope Volume Out
 
     // Envelope Function
-    gb_envelopeFunction envelopeFunction (
+    gb_apu_function_envelope envelopeFunction (
         .clk(clk),
         .clk_vol_env(clk_vol_env),
         .start(start_posedge),
@@ -155,7 +155,7 @@ module gb_noiseChannel (
     );
 
     // Length Function
-    gb_lengthFunction #(6) lengthFunction (
+    gb_apu_function_length #(6) lengthFunction (
         .clk(clk),
         .reset(reset),
         .clk_length_ctr(clk_length_ctr),
@@ -168,4 +168,4 @@ module gb_noiseChannel (
     // Only output target volume if the Envelope and Length functions allow it
     assign level = (enable & target_freq_out) ? target_vol : 4'b0000;
 
-endmodule : gb_noiseChannel
+endmodule : gb_apu_channel_noise

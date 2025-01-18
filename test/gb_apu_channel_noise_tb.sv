@@ -1,23 +1,20 @@
-/* Testbench for Pulse Channel */
-module gb_pulseChannel_tb ();
+/* Testbench for Noise Channel */
+module gb_apu_channel_noise_tb ();
 
-    // IO
+    // IO Replication
     logic reset;
     logic clk;
     logic clk_length_ctr;
     logic clk_vol_env;
-    logic clk_sweep;
-    logic [2:0] sweep_time;
-    logic sweep_decreasing;
-    logic [2:0] num_sweep_shifts;
-    logic [1:0] wave_duty;
     logic [5:0] length;
     logic [3:0] initial_volume;
     logic envelope_increasing;
     logic [2:0] num_envelope_sweeps;
+    logic [3:0] shift_clock_freq;
+    logic counter_width;
+    logic [2:0] freq_dividing_ratio;
     logic start;
     logic single;
-    logic [10:0] frequency;
     logic [3:0] level;
     logic enable;
 
@@ -27,8 +24,9 @@ module gb_pulseChannel_tb ();
     end : ToggleClock
 
     // Instance
-    gb_pulseChannel dut (.*);
+    gb_apu_channel_noise dut (.*);
 
+    // Tasks
     task automatic trigger();
         start = 1'b0;
         @(posedge clk);
@@ -55,56 +53,40 @@ module gb_pulseChannel_tb ();
         clk_vol_env = 1'b0;
     endtask : tickEnvelope
 
-    task automatic tickSweep();
-        clk_sweep = 1'b1;
-        @(posedge clk);
-        clk_sweep = 1'b0;
-    endtask : tickSweep
-
-    task automatic tickAll();
+    task automatic tickLengthEnvelope();
         clk_length_ctr = 1'b1;
         clk_vol_env = 1'b1;
-        clk_sweep = 1'b1;
         @(posedge clk);
         clk_length_ctr = 1'b0;
         clk_vol_env = 1'b0;
-        clk_sweep = 1'b0;
-    endtask : tickAll
+    endtask : tickLengthEnvelope
 
     initial begin : Testbench
 
         // Length Function Settings
-        single = 1'b1;  // enable
-        length = 6'b000001;
+        single = 1'b1;
+        length = 6'b101000;
 
         // Envelope Function Settings
-        initial_volume = 4'b0001;
+        initial_volume = 4'b0001;  // Max volume
         envelope_increasing = 1'b1;
-        num_envelope_sweeps = 3'b111;
+        num_envelope_sweeps = 3'b001;
 
-        // Sweep Function Settings
-        sweep_time = 3'b111;  // Pace
-        sweep_decreasing = 1'b1;  // Direction
-        num_sweep_shifts = 3'b111;  // Sweep shift amount
-        frequency = 11'b11111111111;  // system frequency
-
-        // Pulse Channel Settings
-        wave_duty = 2'b10;  // duty cycle select
+        // Noise Channel Settings
+        shift_clock_freq = 4'b0000;
+        counter_width = 0;  // xor last index
+        freq_dividing_ratio = 3'b000;
 
         sysReset();
         trigger();
+        repeat (150) @(posedge clk);  // Run until output is 1
 
-        //repeat(100) @(posedge clk);
+        // test functions
         //repeat(100) tickLength();
         //repeat(100) tickEnvelope();
-
-        repeat (1000) begin
-            tickAll();
-            repeat (64) @(posedge clk);
-        end
-        //repeat(100) tickAll();
+        repeat (100) tickLengthEnvelope();
 
         $stop();
     end : Testbench
 
-endmodule : gb_pulseChannel_tb
+endmodule : gb_apu_channel_noise_tb
