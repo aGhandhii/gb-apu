@@ -32,32 +32,38 @@ module gb_apu_channel_pulse_tb ();
     task automatic trigger();
         start = 1'b0;
         @(posedge clk);
+        #1;
         start = 1'b1;
         @(posedge clk);
+        #1;
         start = 1'b0;
     endtask : trigger
 
     task automatic sysReset();
         reset = 1'b1;
         @(posedge clk);
+        #1;
         reset = 1'b0;
     endtask : sysReset
 
     task automatic tickLength();
         clk_length_ctr = 1'b1;
         @(posedge clk);
+        #1;
         clk_length_ctr = 1'b0;
     endtask : tickLength
 
     task automatic tickEnvelope();
         clk_vol_env = 1'b1;
         @(posedge clk);
+        #1;
         clk_vol_env = 1'b0;
     endtask : tickEnvelope
 
     task automatic tickSweep();
         clk_sweep = 1'b1;
         @(posedge clk);
+        #1;
         clk_sweep = 1'b0;
     endtask : tickSweep
 
@@ -66,12 +72,17 @@ module gb_apu_channel_pulse_tb ();
         clk_vol_env = 1'b1;
         clk_sweep = 1'b1;
         @(posedge clk);
+        #1;
         clk_length_ctr = 1'b0;
         clk_vol_env = 1'b0;
         clk_sweep = 1'b0;
     endtask : tickAll
 
     initial begin : Testbench
+
+        // Save simulation results
+        $dumpfile("gb_apu_channel_pulse_tb.vcd");
+        $dumpvars();
 
         // Length Function Settings
         single = 1'b1;  // enable

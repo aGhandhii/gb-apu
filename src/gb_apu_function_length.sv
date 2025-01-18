@@ -53,7 +53,7 @@ module gb_apu_function_length #(
                 length_left <= (length == 0) ? ({WIDTH{1'b1}}) : (length);
             end else if (clk_length_ctr) begin
                 if (single) begin
-                    if (length_left != {WIDTH{1'b1}}) length_left <= length_left + 1'b1;
+                    if (length_left != {WIDTH{1'b1}}) length_left <= length_left + 1;
                     else enable <= 1'b0;
                 end
             end

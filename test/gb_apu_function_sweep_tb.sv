@@ -30,8 +30,9 @@ module gb_apu_function_sweep_tb ();
     task automatic tickSweepClock();
         clk_sweep = 1'b1;
         @(posedge clk);
+        #1;  // Delay for logic resolution
         clk_sweep = 1'b0;
-    endtask : tickLengthClock
+    endtask : tickSweepClock
 
     task automatic sweepSettings(logic [2:0] pace, logic decr, logic [2:0] sweepShamt, logic [10:0] freq);
         sweep_pace = pace;
@@ -41,9 +42,14 @@ module gb_apu_function_sweep_tb ();
     endtask : sweepSettings
 
     initial begin : Testbench
+
+        // Save simulation results
+        $dumpfile("gb_apu_function_sweep_tb.vcd");
+        $dumpvars();
+
         sweepSettings(.pace(3'b001), .decr(1'b1), .sweepShamt(3'b010), .freq(11'b00001000000));
         triggerChannel();
-        repeat (100) tickSweepClock();
+        repeat (200) tickSweepClock();
         $stop();
     end : Testbench
 

@@ -36,11 +36,17 @@ module gb_apu_function_length_tb ();
     task automatic tickLengthClock();
         clk_length_ctr = 1'b1;
         @(posedge clk);
+        #1;  // Give time for design to resolve logic
         clk_length_ctr = 1'b0;
         $display("%s", enable ? "Volume ON" : "Volume OFF");
     endtask : tickLengthClock
 
     initial begin : Testbench
+
+        // Save simulation results
+        $dumpfile("gb_apu_function_length_tb.vcd");
+        $dumpvars();
+
         single = 1'b1;
         length = 6'b111100;  // 4 cycles till shutoff
         resetChannel();

@@ -27,6 +27,7 @@ module gb_apu_function_envelope_tb ();
     task automatic tickEnvelope();
         clk_vol_env = 1'b1;
         @(posedge clk);
+        #1;  // Time for logic resolution
         clk_vol_env = 1'b0;
         $display("Output Volume %4b", target_vol);
     endtask : tickEnvelope
@@ -38,6 +39,11 @@ module gb_apu_function_envelope_tb ();
     endtask : setEnvelopeSettings
 
     initial begin : Testbench
+
+        // Save simulation results
+        $dumpfile("gb_apu_function_envelope_tb.vcd");
+        $dumpvars();
+
         setEnvelopeSettings(.volInitial(4'b0000), .isIncreasing(1'b1), .numSweeps(3'b001));
         triggerChannel();
         repeat (50) tickEnvelope();

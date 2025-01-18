@@ -22,12 +22,21 @@ module gb_apu_tb ();
     task automatic sysReset();
         reset = 1'b1;
         @(posedge clk);
+        #1;
         reset = 1'b0;
     endtask : sysReset
 
     initial begin : Testbench
+
+        // Save simulation results
+        $dumpfile("gb_apu_tb.vcd");
+        $dumpvars();
+
         sysReset();
-        repeat (4194304) @(posedge clk);
+        repeat (4194304) begin
+            @(posedge clk);
+            #1;
+        end
         $stop();
     end : Testbench
 

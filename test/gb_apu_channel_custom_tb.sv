@@ -40,28 +40,36 @@ module gb_apu_channel_custom_tb ();
     task automatic tickLength();
         clk_length_ctr = 1'b1;
         @(posedge clk);
+        #1;
         clk_length_ctr = 1'b0;
     endtask : tickLength
 
     task automatic trigger();
         start = 1'b0;
         @(posedge clk);
+        #1;
         start = 1'b1;
         @(posedge clk);
+        #1;
         start = 1'b0;
     endtask : trigger
 
     task automatic sysRst();
         reset = 1'b1;
         @(posedge clk);
+        #1;
         reset = 1'b0;
-    endtask : sysReset
+    endtask : sysRst
 
     // Instance
     gb_apu_channel_custom dut (.*);
 
     // Testbench
     initial begin
+
+        // Save simulation results
+        $dumpfile("gb_apu_channel_custom_tb.vcd");
+        $dumpvars();
 
         // Length Function
         length = 8'b11001000;
@@ -75,8 +83,8 @@ module gb_apu_channel_custom_tb ();
         sysRst();
         trigger();
         repeat (100) begin
-            @(posedge clk);
-            //tickLength();
+            //@(posedge clk);
+            tickLength();
         end
 
         $stop();
